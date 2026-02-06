@@ -778,8 +778,8 @@
                 authReady = true;
                 return;
             }
-            firebaseApp = firebase.app();
-            firebaseApp = firebase.initializeApp(firebaseConfig);
+            firebase.initializeApp(firebaseConfig);
+
             auth = firebase.auth();
             db = firebase.firestore();
 
