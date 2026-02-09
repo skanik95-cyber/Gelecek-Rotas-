@@ -1096,18 +1096,10 @@
             }
         }
 
-        // Load questions from JSON
-        async function loadQuestions() {
-            try {
-                const response = await fetch('abko_questions.json');
-                questions = await response.json();
-                console.log(`${questions.length} soru yüklendi`);
-            } catch (error) {
-                console.error('Sorular yüklenirken hata:', error);
-                // Fallback: Create sample questions if file not found
-                createSampleQuestions();
-            }
-        }
+         // Load questions (LOCAL - JSON yok)
+function loadQuestions() {
+    createSampleQuestions();
+}
 
         // Create sample questions if JSON file is not available
         function createSampleQuestions() {
