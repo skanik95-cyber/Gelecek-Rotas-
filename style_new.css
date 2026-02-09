@@ -108,6 +108,20 @@ body::before {
     margin-left: 1rem;
 }
 
+.nav-auth {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.nav-user {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    color: var(--accent-yellow);
+}
+
 .nav-icon {
     color: var(--accent-yellow);
     font-size: 1.2rem;
@@ -137,6 +151,150 @@ body::before {
 .page-section.active {
     display: block;
     animation: pageSlideIn 0.6s ease-out;
+}
+
+/* Auth Section */
+.auth-card {
+    background: var(--gradient-card);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-tab {
+    flex: 1;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.auth-tab.active {
+    background: var(--accent-yellow);
+    color: #2b1b00;
+}
+
+.auth-message {
+    min-height: 24px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.auth-message.success {
+    color: #7dffb8;
+}
+
+.auth-message.error {
+    color: #ff8f8f;
+}
+
+.auth-message.warning {
+    color: #ffd66b;
+}
+
+.auth-message.info {
+    color: #cfe5ff;
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+/* Advisor Dashboard */
+.advisor-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.5fr);
+    gap: 2rem;
+}
+
+.advisor-card {
+    background: var(--gradient-card);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+}
+
+.advisor-card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.advisor-table-wrapper {
+    overflow-x: auto;
+}
+
+.advisor-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.advisor-table th,
+.advisor-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.advisor-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent-yellow);
+}
+
+.advisor-row {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.advisor-row:hover,
+.advisor-row.active {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.advisor-student-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.advisor-student-header h4 {
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.advisor-muted {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.advisor-chart-container {
+    min-height: 240px;
+    height: 240px;
+}
+
+@media (max-width: 991px) {
+    .advisor-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 @keyframes pageSlideIn {
@@ -1258,4 +1416,3 @@ body::before {
     margin-right: 8px;
     color: var(--accent-yellow);
 }
-
