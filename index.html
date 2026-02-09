@@ -355,7 +355,7 @@
                                     <label for="login-password" class="form-label">Şifre</label>
                                     <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
                                 </div>
-                                <button class="btn btn-primary w-100" id="login-btn" type="button">Giriş Yap</button>
+                                <button class="btn btn-primary w-100" type="submit">Giriş Yap</button>
                             </form>
                             <form id="register-form" class="auth-form">
                                 <div class="mb-3">
@@ -367,7 +367,7 @@
                                     <input type="password" class="form-control" id="register-password" required minlength="8" autocomplete="new-password">
                                     <small class="form-text text-light">En az 8 karakter girin.</small>
                                 </div>
-                                <button class="btn btn-warning w-100" id="register-btn" type="button">Kayıt Ol</button>
+                                <button class="btn btn-warning w-100" type="submit">Hesap Oluştur</button>
                             </form>
                         </div>
                     </div>
@@ -701,7 +701,8 @@
             { name: "Sosyal Yardım İlgisi", type: "ilgi", madde_sayisi: 10, questions: [] }
         ];
 
-        const protectedPages = new Set([
+        
+            const protectedPages = new Set([
             'action-select',
             'test',
             'results',
@@ -762,13 +763,11 @@
                 authReady = true;
                 return;
             }
-            if (!firebase.apps.length) {
-                console.warn('Firebase config is not set.');
-                setAuthMessage('Firebase yapılandırması eksik. Lütfen yapılandırmayı tamamlayın.', 'warning');
-                authReady = true;
-                return;
+         
             }
             firebaseApp = firebase.app();
+            firebase.initializeApp(firebaseConfig);
+
             auth = firebase.auth();
             db = firebase.firestore();
 
@@ -978,6 +977,9 @@
             const loginBtn = document.getElementById('nav-login-btn');
             const registerBtn = document.getElementById('nav-register-btn');
             const logoutBtn = document.getElementById('nav-logout-btn');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
             if (loginBtn) {
                 loginBtn.addEventListener('click', () => {
                     pendingPage = null;
@@ -1007,36 +1009,43 @@
                 });
             });
 
-            updateAuthUI();
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginButton = document.getElementById('login-btn');
-            const registerButton = document.getElementById('register-btn');
-
-            if (loginButton) {
-                loginButton.addEventListener('click', async () => {
-                    const username = document.getElementById('login-username')?.value || '';
-                    const password = document.getElementById('login-password')?.value || '';
+            if (loginForm) {
+                loginForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    const username = document.getElementById('login-username').value;
+                    const password = document.getElementById('login-password').value;
                     const result = await loginUser(username, password);
-                    alert(result.message);
+                    setAuthMessage(result.message, result.ok ? 'success' : 'error');
                     if (result.ok) {
+                        updateAuthUI();
+                        pendingPage = null;
                         showPage('action-select');
+                        const nextPage = pendingPage || 'home';
+                        pendingPage = null;
+                        showPage(nextPage);
                     }
                 });
             }
 
-            if (registerButton) {
-                registerButton.addEventListener('click', async () => {
-                    const username = document.getElementById('register-username')?.value || '';
-                    const password = document.getElementById('register-password')?.value || '';
+            if (registerForm) {
+                registerForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    const username = document.getElementById('register-username').value;
+                    const password = document.getElementById('register-password').value;
                     const result = await registerUser(username, password);
-                    alert(result.message);
+                    setAuthMessage(result.message, result.ok ? 'success' : 'error');
                     if (result.ok) {
+                        updateAuthUI();
+                        pendingPage = null;
                         showPage('action-select');
+                        const nextPage = pendingPage || 'home';
+                        pendingPage = null;
+                        showPage(nextPage);
                     }
                 });
             }
+
+            updateAuthUI();
         });
 
         // Check if external libraries are available
