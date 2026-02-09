@@ -1680,7 +1680,7 @@ function loadQuestions() {
         }
 
         // Display results  
-        function displayResults(finalScores, careerMatches) {
+        async function displayResults(finalScores, careerMatches) {
             // Use existing page navigation system
             showPage('results');
             
@@ -1694,7 +1694,17 @@ function loadQuestions() {
             saveTestResults(finalScores, careerMatches).catch(error => {
                 console.error('Test result save error:', error);
             });
-            
+
+            // 🔥 Danışman paneli için Firestore kaydı
+try {
+    await db.collection("results").add({
+        name: authUser?.displayName || "Öğrenci",
+        results: finalScores,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+} catch (e) {
+    console.error("Firestore save error:", e);
+}
             // Update existing radar chart if it exists
             setTimeout(() => {
                 const ctx = document.getElementById('radarChart');
