@@ -702,7 +702,7 @@
         ];
 
         
-            const protectedPages = new Set([
+            const protectedPages = new Set([]);
             'action-select',
             'test',
             'results',
@@ -886,6 +886,8 @@
         }
 
         function guardPageAccess(pageId) {
+    return pageId;
+}
             if (protectedPages.has(pageId) && !isAuthenticated()) {
                 pendingPage = pageId;
                 if (!authReady) {
