@@ -39,9 +39,9 @@
             </a>
             
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" data-page="home">Anasayfa</a>
-                <a class="nav-link" href="#" data-page="about">Hakkında</a>
-                <a class="nav-link d-none" href="#" id="nav-advisor-link" data-page="advisor-dashboard">Danışman Paneli</a>
+                <a class="nav-link" href="#" onclick="showPage('home')">Anasayfa</a>
+                <a class="nav-link" href="#" onclick="showPage('about')">Hakkında</a>
+                <a class="nav-link d-none" href="#" id="nav-advisor-link" onclick="showPage('advisor-dashboard')">Danışman Paneli</a>
                 <div class="nav-icons">
                     <i class="fas fa-th nav-icon"></i>
                 </div>
@@ -355,7 +355,7 @@
                                     <label for="login-password" class="form-label">Şifre</label>
                                     <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
                                 </div>
-                                <button class="btn btn-primary w-100" id="login-btn" type="button">Giriş Yap</button>
+                                <button class="btn btn-primary w-100" type="submit">Giriş Yap</button>
                             </form>
                             <form id="register-form" class="auth-form">
                                 <div class="mb-3">
@@ -367,7 +367,7 @@
                                     <input type="password" class="form-control" id="register-password" required minlength="8" autocomplete="new-password">
                                     <small class="form-text text-light">En az 8 karakter girin.</small>
                                 </div>
-                                <button class="btn btn-warning w-100" id="register-btn" type="button">Kayıt Ol</button>
+                                <button class="btn btn-warning w-100" type="submit">Hesap Oluştur</button>
                             </form>
                         </div>
                     </div>
@@ -436,7 +436,7 @@
                             </div>
                         </div>
                         <div class="text-center mt-4">
-                            <button class="btn btn-outline-light" data-page="home">
+                            <button class="btn btn-outline-light" onclick="showPage('home')">
                                 <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
                             </button>
                         </div>
@@ -701,7 +701,8 @@
             { name: "Sosyal Yardım İlgisi", type: "ilgi", madde_sayisi: 10, questions: [] }
         ];
 
-        const protectedPages = new Set([
+        
+            const protectedPages = new Set([
             'action-select',
             'test',
             'results',
@@ -762,13 +763,11 @@
                 authReady = true;
                 return;
             }
-            if (!firebase.apps.length) {
-                console.warn('Firebase config is not set.');
-                setAuthMessage('Firebase yapılandırması eksik. Lütfen yapılandırmayı tamamlayın.', 'warning');
-                authReady = true;
-                return;
+         
             }
             firebaseApp = firebase.app();
+            firebase.initializeApp(firebaseConfig);
+
             auth = firebase.auth();
             db = firebase.firestore();
 
@@ -978,6 +977,9 @@
             const loginBtn = document.getElementById('nav-login-btn');
             const registerBtn = document.getElementById('nav-register-btn');
             const logoutBtn = document.getElementById('nav-logout-btn');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
             if (loginBtn) {
                 loginBtn.addEventListener('click', () => {
                     pendingPage = null;
@@ -1007,81 +1009,43 @@
                 });
             });
 
-            document.addEventListener('click', event => {
-                const pageTrigger = event.target.closest('[data-page]');
-                if (pageTrigger) {
+            if (loginForm) {
+                loginForm.addEventListener('submit', async event => {
                     event.preventDefault();
-                    showPage(pageTrigger.dataset.page);
-                    return;
-                }
-
-                const actionTrigger = event.target.closest('[data-action]');
-                if (actionTrigger) {
-                    const action = actionTrigger.dataset.action;
-                    if (action === 'fill-random') {
-                        fillRandomly();
-                    } else if (action === 'reset-test') {
-                        resetTest();
-                    } else if (action === 'reload') {
-                        location.reload();
-                    } else if (action === 'hide-vr') {
-                        hideVRExperience();
+                    const username = document.getElementById('login-username').value;
+                    const password = document.getElementById('login-password').value;
+                    const result = await loginUser(username, password);
+                    setAuthMessage(result.message, result.ok ? 'success' : 'error');
+                    if (result.ok) {
+                        updateAuthUI();
+                        pendingPage = null;
+                        showPage('action-select');
+                        const nextPage = pendingPage || 'home';
+                        pendingPage = null;
+                        showPage(nextPage);
                     }
-                    return;
-                }
+                });
+            }
 
-                const careerTrigger = event.target.closest('[data-career-action]');
-                if (careerTrigger) {
-                    const careerId = Number(careerTrigger.dataset.careerId);
-                    if (!Number.isNaN(careerId)) {
-                        if (careerTrigger.dataset.careerAction === 'details') {
-                            showCareerDetail(careerId);
-                        } else if (careerTrigger.dataset.careerAction === 'open-vr') {
-                            openVRSimulation(careerId);
-                        } else if (careerTrigger.dataset.careerAction === 'open-vr-close') {
-                            openVRSimulation(careerId);
-                            const modalEl = careerTrigger.closest('.modal');
-                            const modalInstance = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
-                            if (modalInstance) {
-                                modalInstance.hide();
-                            }
-                        }
+            if (registerForm) {
+                registerForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    const username = document.getElementById('register-username').value;
+                    const password = document.getElementById('register-password').value;
+                    const result = await registerUser(username, password);
+                    setAuthMessage(result.message, result.ok ? 'success' : 'error');
+                    if (result.ok) {
+                        updateAuthUI();
+                        pendingPage = null;
+                        showPage('action-select');
+                        const nextPage = pendingPage || 'home';
+                        pendingPage = null;
+                        showPage(nextPage);
                     }
-                }
-            });
+                });
+            }
 
             updateAuthUI();
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginButton = document.getElementById('login-btn');
-            const registerButton = document.getElementById('register-btn');
-
-            if (loginButton) {
-                loginButton.addEventListener('click', async () => {
-                    const username = document.getElementById('login-username')?.value || '';
-                    const password = document.getElementById('login-password')?.value || '';
-                    const result = await loginUser(username, password);
-                    if (result.ok) {
-                        showPage('action-select');
-                    } else {
-                        alert(result.message);
-                    }
-                });
-            }
-
-            if (registerButton) {
-                registerButton.addEventListener('click', async () => {
-                    const username = document.getElementById('register-username')?.value || '';
-                    const password = document.getElementById('register-password')?.value || '';
-                    const result = await registerUser(username, password);
-                    if (result.ok) {
-                        showPage('action-select');
-                    } else {
-                        alert(result.message);
-                    }
-                });
-            }
         });
 
         // Check if external libraries are available
