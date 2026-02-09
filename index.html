@@ -2709,6 +2709,18 @@
             // Call original function
             originalShowPage(pageId);
         };
+        
+        document.addEventListener("DOMContentLoaded", () => {
+
+           document.querySelectorAll("[data-page]").forEach(el => {
+               el.addEventListener("click", (e) => {
+                   e.preventDefault();
+                   const page = el.getAttribute("data-page");
+                   showPage(page);
+           });
+       });
+
+   });
     </script>
 </body>
 </html>
