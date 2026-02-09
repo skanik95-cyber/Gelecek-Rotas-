@@ -763,12 +763,7 @@
                 authReady = true;
                 return;
             }
-            if (!firebase.apps.length) {
-            if (firebaseConfig.apiKey === 'YOUR_API_KEY') {
-                console.warn('Firebase config is not set.');
-                setAuthMessage('Firebase yapılandırması eksik. Lütfen yapılandırmayı tamamlayın.', 'warning');
-                authReady = true;
-                return;
+         
             }
             firebaseApp = firebase.app();
             firebase.initializeApp(firebaseConfig);
