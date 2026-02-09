@@ -21,6 +21,11 @@
     <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebaseConfig.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style_new.css">
 </head>
@@ -36,8 +41,24 @@
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="#" onclick="showPage('home')">Anasayfa</a>
                 <a class="nav-link" href="#" onclick="showPage('about')">Hakkında</a>
+                <a class="nav-link d-none" href="#" id="nav-advisor-link" onclick="showPage('advisor-dashboard')">Danışman Paneli</a>
                 <div class="nav-icons">
                     <i class="fas fa-th nav-icon"></i>
+                </div>
+                <div class="nav-auth ms-3">
+                    <span class="nav-user d-none" id="nav-user">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span id="nav-username"></span>
+                    </span>
+                    <button class="btn btn-sm btn-outline-light me-2" id="nav-login-btn" type="button">
+                        Giriş
+                    </button>
+                    <button class="btn btn-sm btn-warning me-2" id="nav-register-btn" type="button">
+                        Kayıt Ol
+                    </button>
+                    <button class="btn btn-sm btn-outline-light d-none" id="nav-logout-btn" type="button">
+                        Çıkış
+                    </button>
                 </div>
             </div>
         </div>
@@ -309,6 +330,120 @@
                 </div>
             </div>
         </section>
+
+        <!-- Auth Page -->
+        <section id="auth-page" class="page-section">
+            <div class="container">
+                <div class="row justify-content-center min-vh-100 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="auth-card">
+                            <div class="text-center mb-4">
+                                <h1 class="page-title">HESABINIZA GİRİN</h1>
+                                <p class="page-subtitle">Özel içeriklere erişmek için giriş yapın veya kayıt olun.</p>
+                            </div>
+                            <div class="auth-tabs">
+                                <button class="auth-tab active" data-auth-tab="login" type="button">Giriş Yap</button>
+                                <button class="auth-tab" data-auth-tab="register" type="button">Kayıt Ol</button>
+                            </div>
+                            <div class="auth-message" id="auth-message" role="status" aria-live="polite"></div>
+                            <form id="login-form" class="auth-form active">
+                                <div class="mb-3">
+                                    <label for="login-username" class="form-label">Kullanıcı Adı</label>
+                                    <input type="text" class="form-control" id="login-username" required autocomplete="username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">Şifre</label>
+                                    <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                </div>
+                                <button class="btn btn-primary w-100" id="login-btn" type="button">Giriş Yap</button>
+                            </form>
+                            <form id="register-form" class="auth-form">
+                                <div class="mb-3">
+                                    <label for="register-username" class="form-label">Kullanıcı Adı</label>
+                                    <input type="text" class="form-control" id="register-username" required autocomplete="username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-password" class="form-label">Şifre</label>
+                                    <input type="password" class="form-control" id="register-password" required minlength="8" autocomplete="new-password">
+                                    <small class="form-text text-light">En az 8 karakter girin.</small>
+                                </div>
+                                <button class="btn btn-warning w-100" id="register-btn" type="button">Kayıt Ol</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advisor Dashboard Page -->
+        <section id="advisor-dashboard-page" class="page-section">
+            <div class="container">
+                <div class="row min-vh-100">
+                    <div class="col-12">
+                        <div class="text-center mb-5">
+                            <h1 class="page-title">DANIŞMAN PANELİ</h1>
+                            <p class="page-subtitle">Atanmış öğrencileri inceleyin ve test sonuçlarını takip edin.</p>
+                        </div>
+                        <div class="advisor-layout">
+                            <div class="advisor-card">
+                                <h3 class="advisor-card-title">Öğrenciler</h3>
+                                <div class="advisor-table-wrapper">
+                                    <table class="advisor-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Öğrenci</th>
+                                                <th>Son Güncelleme</th>
+                                                <th>Test Sayısı</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="advisor-student-list">
+                                            <tr>
+                                                <td colspan="3">Öğrenciler yükleniyor...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="advisor-card">
+                                <h3 class="advisor-card-title">Öğrenci Detayları</h3>
+                                <div class="advisor-student-details">
+                                    <div class="advisor-student-header">
+                                        <div>
+                                            <h4 id="advisor-student-name">Bir öğrenci seçin</h4>
+                                            <p class="advisor-muted" id="advisor-student-meta">Test sonuçlarını görmek için tablodan seçim yapın.</p>
+                                        </div>
+                                    </div>
+                                    <div class="advisor-chart-container">
+                                        <canvas id="advisor-progress-chart"></canvas>
+                                    </div>
+                                    <div class="advisor-table-wrapper mt-4">
+                                        <table class="advisor-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tarih</th>
+                                                    <th>En Güçlü Alanlar</th>
+                                                    <th>Önerilen Meslek Sayısı</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="advisor-results-list">
+                                                <tr>
+                                                    <td colspan="3">Henüz veri yok.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-outline-light" onclick="showPage('home')">
+                                <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Bootstrap JS -->
@@ -566,8 +701,216 @@
             { name: "Sosyal Yardım İlgisi", type: "ilgi", madde_sayisi: 10, questions: [] }
         ];
 
+        const protectedPages = new Set([
+            'action-select',
+            'test',
+            'results',
+            'vr-explore',
+            'vr-simulation',
+            'careers',
+            'advisor-dashboard'
+        ]);
+
+        let pendingPage = null;
+        let firebaseApp = null;
+        let auth = null;
+        let db = null;
+        let authUser = null;
+        let authReady = false;
+        let currentUserRole = 'student';
+
+        function normalizeUsername(username) {
+            return username.trim().toLowerCase();
+        }
+
+        function isAuthenticated() {
+            return Boolean(authUser);
+        }
+
+        function getCurrentUser() {
+            return authUser?.displayName || authUser?.email || '';
+        }
+
+        function isAdvisor() {
+            return isAuthenticated() && currentUserRole === 'advisor';
+        }
+
+        function setAuthMessage(message, type = 'info') {
+            const messageEl = document.getElementById('auth-message');
+            if (!messageEl) return;
+            messageEl.textContent = message;
+            messageEl.className = `auth-message ${type}`;
+        }
+
+        function getRoleForUsername(username) {
+            const normalized = normalizeUsername(username);
+            if (normalized.startsWith('advisor-') || normalized.startsWith('danisman-')) {
+                return 'advisor';
+            }
+            return 'student';
+        }
+
+        function formatAuthEmail(username) {
+            const normalized = normalizeUsername(username);
+            return `${normalized}@gelecekrotasi.local`;
+        }
+
+        function initializeFirebase() {
+            if (!window.firebase) {
+                console.error('Firebase SDK not available.');
+                setAuthMessage('Kimlik doğrulama servisi yüklenemedi.', 'error');
+                authReady = true;
+                return;
+            }
+            if (!firebase.apps.length) {
+                console.warn('Firebase config is not set.');
+                setAuthMessage('Firebase yapılandırması eksik. Lütfen yapılandırmayı tamamlayın.', 'warning');
+                authReady = true;
+                return;
+            }
+            firebaseApp = firebase.app();
+            auth = firebase.auth();
+            db = firebase.firestore();
+
+            auth.onAuthStateChanged(async user => {
+                authUser = user;
+                authReady = true;
+                if (user) {
+                    await syncUserProfile(user);
+                }
+                updateAuthUI();
+                const activePage = getActivePageId();
+                if (!user && protectedPages.has(activePage)) {
+                    showPage('home');
+                }
+            });
+        }
+
+        async function syncUserProfile(user) {
+            if (!db || !user) return;
+            const userRef = db.collection('users').doc(user.uid);
+            const snapshot = await userRef.get();
+            if (snapshot.exists) {
+                currentUserRole = snapshot.data().role || 'student';
+                await userRef.set({
+                    lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                return;
+            }
+            currentUserRole = getRoleForUsername(user.displayName || user.email || '');
+            await userRef.set({
+                username: user.displayName || '',
+                role: currentUserRole,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+
+        function showAuthTab(tabName) {
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.authTab === tabName);
+            });
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.toggle('active', form.id === `${tabName}-form`);
+            });
+        }
+
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('nav-login-btn');
+            const registerBtn = document.getElementById('nav-register-btn');
+            const logoutBtn = document.getElementById('nav-logout-btn');
+            const userBadge = document.getElementById('nav-user');
+            const usernameEl = document.getElementById('nav-username');
+            const advisorLink = document.getElementById('nav-advisor-link');
+            const loggedIn = isAuthenticated();
+
+            if (loginBtn) loginBtn.classList.toggle('d-none', loggedIn);
+            if (registerBtn) registerBtn.classList.toggle('d-none', loggedIn);
+            if (logoutBtn) logoutBtn.classList.toggle('d-none', !loggedIn);
+            if (userBadge) userBadge.classList.toggle('d-none', !loggedIn);
+            if (usernameEl) usernameEl.textContent = loggedIn ? getCurrentUser() : '';
+            if (advisorLink) advisorLink.classList.toggle('d-none', !isAdvisor());
+        }
+
+        async function registerUser(username, password) {
+            if (!auth) {
+                return { ok: false, message: 'Kimlik doğrulama servisi yüklenemedi.' };
+            }
+            const trimmedUsername = username.trim();
+            if (trimmedUsername.length < 3) {
+                return { ok: false, message: 'Kullanıcı adı en az 3 karakter olmalıdır.' };
+            }
+            if (password.length < 8) {
+                return { ok: false, message: 'Şifre en az 8 karakter olmalıdır.' };
+            }
+            try {
+                const email = formatAuthEmail(trimmedUsername);
+                const credentials = await auth.createUserWithEmailAndPassword(email, password);
+                await credentials.user.updateProfile({ displayName: trimmedUsername });
+                currentUserRole = getRoleForUsername(trimmedUsername);
+                await db.collection('users').doc(credentials.user.uid).set({
+                    username: trimmedUsername,
+                    role: currentUserRole,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                return { ok: true, message: 'Hesabınız oluşturuldu ve giriş yapıldı.' };
+            } catch (error) {
+                console.error('Registration error:', error);
+                return { ok: false, message: 'Kayıt sırasında hata oluştu. Lütfen bilgilerinizi kontrol edin.' };
+            }
+        }
+
+        async function loginUser(username, password) {
+            if (!auth) {
+                return { ok: false, message: 'Kimlik doğrulama servisi yüklenemedi.' };
+            }
+            try {
+                const email = formatAuthEmail(username);
+                const credentials = await auth.signInWithEmailAndPassword(email, password);
+                await syncUserProfile(credentials.user);
+                return { ok: true, message: 'Başarıyla giriş yaptınız.' };
+            } catch (error) {
+                console.error('Login error:', error);
+                return { ok: false, message: 'Kullanıcı adı veya şifre hatalı.' };
+            }
+        }
+
+        function getActivePageId() {
+            const activeSection = document.querySelector('.page-section.active');
+            if (!activeSection) return 'home';
+            return activeSection.id.replace('-page', '');
+        }
+
+        function logoutUser() {
+            if (!auth) return;
+            auth.signOut();
+        }
+
+        function guardPageAccess(pageId) {
+            if (protectedPages.has(pageId) && !isAuthenticated()) {
+                pendingPage = pageId;
+                if (!authReady) {
+                    setAuthMessage('Kimlik doğrulama servisi yükleniyor...', 'info');
+                } else {
+                    setAuthMessage('Bu sayfaya erişmek için giriş yapmalısınız.', 'warning');
+                }
+                showAuthTab('login');
+                return 'auth';
+            }
+            if (pageId === 'advisor-dashboard' && !isAdvisor()) {
+                setAuthMessage('Bu sayfaya erişmek için danışman hesabı gerekir.', 'warning');
+                return 'home';
+            }
+            if (pageId === 'auth' && isAuthenticated()) {
+                setAuthMessage('Zaten giriş yaptınız.', 'success');
+            }
+            return pageId;
+        }
+
         // Page navigation with smooth transitions
         function showPage(pageId) {
+            const guardedPageId = guardPageAccess(pageId);
             // Hide all pages
             document.querySelectorAll('.page-section').forEach(page => {
                 page.classList.remove('active');
@@ -575,21 +918,28 @@
             
             // Show target page with animation
             setTimeout(() => {
-                const targetPage = document.getElementById(pageId + '-page');
+                const targetPage = document.getElementById(guardedPageId + '-page');
                 if (targetPage) {
                     targetPage.classList.add('active');
                     
                     // Initialize page-specific content
-                    if (pageId === 'test') {
+                    if (guardedPageId === 'test') {
                         initializeTest();
-                    } else if (pageId === 'careers') {
+                    } else if (guardedPageId === 'careers') {
                         loadAllCareers();
-                    } else if (pageId === 'vr-explore') {
+                    } else if (guardedPageId === 'vr-explore') {
                         loadVRCareers();
-                    } else if (pageId === 'results') {
+                    } else if (guardedPageId === 'results') {
                         // Check if we have test results to display
                         if (window.testResults && window.testResults.categoryScores) {
                             displayExistingResults();
+                        }
+                    } else if (guardedPageId === 'advisor-dashboard') {
+                        loadAdvisorDashboard();
+                    } else if (guardedPageId === 'auth') {
+                        const usernameInput = document.getElementById('login-username');
+                        if (usernameInput) {
+                            usernameInput.focus();
                         }
                     }
                 }
@@ -622,6 +972,71 @@
             
             // Add scroll animations
             addScrollAnimations();
+
+            initializeFirebase();
+
+            const loginBtn = document.getElementById('nav-login-btn');
+            const registerBtn = document.getElementById('nav-register-btn');
+            const logoutBtn = document.getElementById('nav-logout-btn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    pendingPage = null;
+                    setAuthMessage('');
+                    showAuthTab('login');
+                    showPage('auth');
+                });
+            }
+
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    pendingPage = null;
+                    setAuthMessage('');
+                    showAuthTab('register');
+                    showPage('auth');
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logoutUser);
+            }
+
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    setAuthMessage('');
+                    showAuthTab(tab.dataset.authTab);
+                });
+            });
+
+            updateAuthUI();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginButton = document.getElementById('login-btn');
+            const registerButton = document.getElementById('register-btn');
+
+            if (loginButton) {
+                loginButton.addEventListener('click', async () => {
+                    const username = document.getElementById('login-username')?.value || '';
+                    const password = document.getElementById('login-password')?.value || '';
+                    const result = await loginUser(username, password);
+                    alert(result.message);
+                    if (result.ok) {
+                        showPage('action-select');
+                    }
+                });
+            }
+
+            if (registerButton) {
+                registerButton.addEventListener('click', async () => {
+                    const username = document.getElementById('register-username')?.value || '';
+                    const password = document.getElementById('register-password')?.value || '';
+                    const result = await registerUser(username, password);
+                    alert(result.message);
+                    if (result.ok) {
+                        showPage('action-select');
+                    }
+                });
+            }
         });
 
         // Check if external libraries are available
@@ -629,7 +1044,8 @@
             const libraries = {
                 'Three.js': typeof THREE !== 'undefined',
                 'Chart.js': typeof Chart !== 'undefined',
-                'YouTube API': typeof YT !== 'undefined'
+                'YouTube API': typeof YT !== 'undefined',
+                'Firebase': typeof firebase !== 'undefined'
             };
             
             console.log('Library availability:', libraries);
@@ -1096,6 +1512,173 @@
             return recommendations.sort((a, b) => b.matchPercentage - a.matchPercentage);
         }
 
+        async function saveTestResults(finalScores, careerMatches) {
+            if (!db || !authUser) return;
+            const recommendedCareers = careerMatches
+                .filter(career => career.matchPercentage >= 60)
+                .map(career => ({
+                    name: career.name,
+                    matchPercentage: Math.round(career.matchPercentage)
+                }));
+            await db.collection('testResults').add({
+                userId: authUser.uid,
+                username: authUser.displayName || '',
+                role: currentUserRole,
+                categoryScores: finalScores,
+                topAreas: getTopAreas(finalScores),
+                recommendedCareers,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        let advisorChart = null;
+
+        function getReadableDate(timestamp) {
+            if (!timestamp) return '-';
+            if (timestamp.seconds) {
+                return new Date(timestamp.seconds * 1000).toLocaleDateString('tr-TR');
+            }
+            return new Date(timestamp).toLocaleDateString('tr-TR');
+        }
+
+        async function loadAdvisorDashboard() {
+            if (!db || !authUser || !isAdvisor()) return;
+            const listBody = document.getElementById('advisor-student-list');
+            if (!listBody) return;
+            listBody.innerHTML = '<tr><td colspan="3">Öğrenciler yükleniyor...</td></tr>';
+            try {
+                const snapshot = await db.collection('users')
+                    .where('advisorId', '==', authUser.uid)
+                    .get();
+                if (snapshot.empty) {
+                    listBody.innerHTML = '<tr><td colspan="3">Atanmış öğrenci bulunamadı.</td></tr>';
+                    return;
+                }
+                listBody.innerHTML = '';
+                const studentPromises = snapshot.docs.map(async doc => {
+                    const data = doc.data();
+                    const resultsSnapshot = await db.collection('testResults')
+                        .where('userId', '==', doc.id)
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                    const latestResult = resultsSnapshot.docs[0]?.data();
+                    const row = document.createElement('tr');
+                    row.classList.add('advisor-row');
+                    row.dataset.studentId = doc.id;
+                    row.innerHTML = `
+                        <td>${data.username || 'Öğrenci'}</td>
+                        <td>${latestResult ? getReadableDate(latestResult.createdAt) : '-'}</td>
+                        <td>${resultsSnapshot.size}</td>
+                    `;
+                    row.addEventListener('click', () => {
+                        document.querySelectorAll('.advisor-row').forEach(item => item.classList.remove('active'));
+                        row.classList.add('active');
+                        loadAdvisorStudentDetails(doc.id, data.username || 'Öğrenci');
+                    });
+                    listBody.appendChild(row);
+                });
+                await Promise.all(studentPromises);
+            } catch (error) {
+                console.error('Advisor dashboard load error:', error);
+                listBody.innerHTML = '<tr><td colspan="3">Öğrenciler yüklenirken hata oluştu.</td></tr>';
+            }
+        }
+
+        async function loadAdvisorStudentDetails(studentId, studentName) {
+            const nameEl = document.getElementById('advisor-student-name');
+            const metaEl = document.getElementById('advisor-student-meta');
+            const resultsBody = document.getElementById('advisor-results-list');
+            if (nameEl) nameEl.textContent = studentName;
+            if (metaEl) metaEl.textContent = 'Test sonuçları yükleniyor...';
+            if (resultsBody) resultsBody.innerHTML = '<tr><td colspan="3">Sonuçlar yükleniyor...</td></tr>';
+            try {
+                const resultsSnapshot = await db.collection('testResults')
+                    .where('userId', '==', studentId)
+                    .orderBy('createdAt', 'asc')
+                    .get();
+                if (resultsSnapshot.empty) {
+                    if (metaEl) metaEl.textContent = 'Öğrencinin henüz test sonucu yok.';
+                    if (resultsBody) resultsBody.innerHTML = '<tr><td colspan="3">Sonuç bulunamadı.</td></tr>';
+                    updateAdvisorChart([]);
+                    return;
+                }
+                const results = resultsSnapshot.docs.map(doc => doc.data());
+                if (metaEl) metaEl.textContent = `${results.length} test sonucu bulundu.`;
+                if (resultsBody) {
+                    resultsBody.innerHTML = results.map(result => {
+                        const topAreas = (result.topAreas || [])
+                            .map(area => `${area.category} (${area.score})`)
+                            .join(', ');
+                        return `
+                            <tr>
+                                <td>${getReadableDate(result.createdAt)}</td>
+                                <td>${topAreas || '-'}</td>
+                                <td>${result.recommendedCareers ? result.recommendedCareers.length : 0}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+                updateAdvisorChart(results);
+            } catch (error) {
+                console.error('Advisor student detail error:', error);
+                if (metaEl) metaEl.textContent = 'Sonuçlar yüklenirken hata oluştu.';
+                if (resultsBody) resultsBody.innerHTML = '<tr><td colspan="3">Sonuçlar yüklenirken hata oluştu.</td></tr>';
+                updateAdvisorChart([]);
+            }
+        }
+
+        function updateAdvisorChart(results) {
+            const chartCanvas = document.getElementById('advisor-progress-chart');
+            if (!chartCanvas || typeof Chart === 'undefined') return;
+            if (advisorChart instanceof Chart) {
+                advisorChart.destroy();
+            }
+            const labels = results.map(result => getReadableDate(result.createdAt));
+            const dataPoints = results.map(result => {
+                const scores = Object.values(result.categoryScores || {});
+                const topScore = scores.length ? Math.max(...scores) : 0;
+                return Number.isFinite(topScore) ? Number(topScore.toFixed(2)) : 0;
+            });
+            advisorChart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'En Yüksek Puan',
+                        data: dataPoints,
+                        borderColor: '#FFD700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#FFFFFF'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        y: {
+                            ticks: { color: '#FFFFFF' },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            beginAtZero: true,
+                            max: 4
+                        }
+                    }
+                }
+            });
+        }
+
         // Display results  
         function displayResults(finalScores, careerMatches) {
             // Use existing page navigation system
@@ -1107,6 +1690,10 @@
                 topAreas: getTopAreas(finalScores),
                 recommendedCareers: careerMatches.filter(career => career.matchPercentage >= 60)
             };
+
+            saveTestResults(finalScores, careerMatches).catch(error => {
+                console.error('Test result save error:', error);
+            });
             
             // Update existing radar chart if it exists
             setTimeout(() => {
@@ -2116,4 +2703,3 @@
     </script>
 </body>
 </html>
-
