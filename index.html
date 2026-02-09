@@ -778,6 +778,7 @@
                 authReady = true;
                 return;
             }
+            firebaseApp = firebase.app();
             firebase.initializeApp(firebaseConfig);
 
             auth = firebase.auth();
@@ -1030,6 +1031,8 @@
                     setAuthMessage(result.message, result.ok ? 'success' : 'error');
                     if (result.ok) {
                         updateAuthUI();
+                        pendingPage = null;
+                        showPage('action-select');
                         const nextPage = pendingPage || 'home';
                         pendingPage = null;
                         showPage(nextPage);
@@ -1046,6 +1049,8 @@
                     setAuthMessage(result.message, result.ok ? 'success' : 'error');
                     if (result.ok) {
                         updateAuthUI();
+                        pendingPage = null;
+                        showPage('action-select');
                         const nextPage = pendingPage || 'home';
                         pendingPage = null;
                         showPage(nextPage);
