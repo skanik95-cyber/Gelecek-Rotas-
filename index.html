@@ -33,7 +33,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#" onclick="showPage('home')">
+            <a class="navbar-brand" href="#" data-page="home">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkQ3MDAiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAyTDEzLjA5IDguMjZMMjAgOUwxNC43NCAxNC4yNkwxNiAyMkwxMiAxOEw4IDIyTDkuMjYgMTQuMjZMNCA5TDEwLjkxIDguMjZMMTIgMloiIGZpbGw9IiM0QjAwODIiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="Gelecek Rotası" class="me-2">
                 <span class="brand-text">Gelecek Rotası</span>
             </a>
@@ -77,7 +77,7 @@
                             <p class="hero-subtitle">
                                 Kendi yeteneklerine ve ilgi alanlarına en uygun meslekleri keşfetmeye hazır mısın?
                             </p>
-                            <button class="btn btn-primary btn-hero" onclick="showPage('action-select')">
+                            <button class="btn btn-primary btn-hero" data-page="action-select">
                                 <i class="fas fa-play me-2"></i>Hadi Başlayalım!
                             </button>
                         </div>
@@ -104,14 +104,14 @@
                         <h1 class="page-title">NE YAPMAK İSTERSİN?</h1>
                         
                         <div class="action-buttons">
-                            <div class="action-card" onclick="showPage('test')">
+                            <div class="action-card" data-page="test">
                                 <div class="action-icon">
                                     <i class="fas fa-clipboard-list"></i>
                                 </div>
                                 <h3>MESLEK TESTİNİ BAŞLAT</h3>
                             </div>
                             
-                            <div class="action-card" onclick="showPage('careers')">
+                            <div class="action-card" data-page="careers">
                                 <div class="action-icon">
                                     <i class="fas fa-vr-cardboard"></i>
                                 </div>
@@ -163,10 +163,10 @@
                             </div>
                             
                             <div class="test-controls">
-                                <button class="btn btn-outline-light" onclick="fillRandomly()">
+                                <button class="btn btn-outline-light" data-action="fill-random">
                                     <i class="fas fa-random me-2"></i>Rastgele Doldur
                                 </button>
-                                <button class="btn btn-outline-light" onclick="resetTest()">
+                                <button class="btn btn-outline-light" data-action="reset-test">
                                     <i class="fas fa-redo me-2"></i>Testi Sıfırla
                                 </button>
                             </div>
@@ -183,7 +183,7 @@
                     <div class="col-12">
                         <div class="results-header text-center mb-5">
                             <h1 class="page-title">TEST SONUÇLARINA GÖRE SANA UYGUN MESLEKLER</h1>
-                            <button class="btn btn-primary btn-lg mt-3" onclick="showPage('vr-explore')">
+                            <button class="btn btn-primary btn-lg mt-3" data-page="vr-explore">
                                 Bu meslekleri VR ile keşfet
                             </button>
                         </div>
@@ -209,10 +209,10 @@
                         </div>
                         
                         <div class="text-center mt-4">
-                            <button class="btn btn-outline-light me-3" onclick="showPage('test')">
+                            <button class="btn btn-outline-light me-3" data-page="test">
                                 <i class="fas fa-redo me-2"></i>Testi Tekrar Çöz
                             </button>
-                            <button class="btn btn-outline-light" onclick="showPage('home')">
+                            <button class="btn btn-outline-light" data-page="home">
                                 <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
                             </button>
                         </div>
@@ -234,10 +234,10 @@
                         </div>
                         
                         <div class="mt-4">
-                            <button class="btn btn-outline-light me-3" onclick="showPage('results')">
+                            <button class="btn btn-outline-light me-3" data-page="results">
                                 <i class="fas fa-arrow-left me-2"></i>Sonuçlara Dön
                             </button>
-                            <button class="btn btn-outline-light" onclick="showPage('home')">
+                            <button class="btn btn-outline-light" data-page="home">
                                 <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
                             </button>
                         </div>
@@ -268,10 +268,10 @@
                         </div>
                         
                         <div class="text-center mt-4">
-                            <button class="btn btn-warning me-3" onclick="showPage('vr-explore')">
+                            <button class="btn btn-warning me-3" data-page="vr-explore">
                                 <i class="fas fa-arrow-left me-2"></i>VR Ana Sayfaya Dön
                             </button>
-                            <button class="btn btn-warning" onclick="showPage('careers')">
+                            <button class="btn btn-warning" data-page="careers">
                                 <i class="fas fa-briefcase me-2"></i>Diğer Meslekleri Gör
                             </button>
                         </div>
@@ -295,7 +295,7 @@
                         </div>
                         
                         <div class="text-center mt-4">
-                            <button class="btn btn-outline-light" onclick="showPage('home')">
+                            <button class="btn btn-outline-light" data-page="home">
                                 <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
                             </button>
                         </div>
@@ -1878,10 +1878,10 @@
                         <h4 class="career-title">${career.name}</h4>
                         <p class="career-description">${career.description}</p>
                         <div class="career-actions">
-                            <button class="btn-career btn-career-primary" onclick="showCareerDetail(${index + 1})">
+                            <button class="btn-career btn-career-primary" data-career-action="details" data-career-id="${index + 1}">
                                 <i class="fas fa-info-circle me-1"></i>Detayları Gör
                             </button>
-                            <button class="btn-career btn-career-secondary" onclick="openVRSimulation(${index + 1})">
+                            <button class="btn-career btn-career-secondary" data-career-action="open-vr" data-career-id="${index + 1}">
                                 <i class="fas fa-vr-cardboard me-1"></i>VR
                             </button>
                         </div>
@@ -1915,10 +1915,10 @@
                     <h4 class="career-title">${career.name}</h4>
                     <p class="career-description">${career.summary}</p>
                     <div class="career-actions">
-                        <button class="btn-career btn-career-primary" onclick="showCareerDetail(${career.id})">
+                        <button class="btn-career btn-career-primary" data-career-action="details" data-career-id="${career.id}">
                             <i class="fas fa-info-circle me-1"></i>Detayları Gör
                         </button>
-                        <button class="btn-career btn-career-secondary" onclick="openVRSimulation(${career.id})">
+                        <button class="btn-career btn-career-secondary" data-career-action="open-vr" data-career-id="${career.id}">
                             <i class="fas fa-vr-cardboard me-1"></i>VR Deneyimi
                         </button>
                     </div>
@@ -1937,7 +1937,8 @@
             availableCareers.forEach(career => {
                 const vrCard = document.createElement('div');
                 vrCard.className = 'vr-career-card';
-                vrCard.onclick = () => openVRSimulation(career.id);
+                vrCard.dataset.careerAction = 'open-vr';
+                vrCard.dataset.careerId = career.id;
                 vrCard.innerHTML = `
                     <i class="${career.icon} vr-career-icon"></i>
                     <h5 class="vr-career-title">${career.name}</h5>
@@ -1981,7 +1982,7 @@
                             </div>
                             
                             <div class="text-center mt-4">
-                                <button class="btn btn-primary btn-lg" onclick="openVRSimulation(${career.id}); bootstrap.Modal.getInstance(this.closest('.modal')).hide();">
+                                <button class="btn btn-primary btn-lg" data-career-action="open-vr-close" data-career-id="${career.id}">
                                     <i class="fas fa-vr-cardboard me-2"></i>VR Simülasyonunu Başlat
                                 </button>
                             </div>
@@ -2647,10 +2648,10 @@
                         </ul>
                     </div>
                     <div class="mt-4">
-                        <button class="btn btn-primary me-2" onclick="location.reload()">
+                        <button class="btn btn-primary me-2" data-action="reload">
                             <i class="fas fa-redo me-2"></i>Tekrar Dene
                         </button>
-                        <button class="btn btn-outline-light" onclick="hideVRExperience()">
+                        <button class="btn btn-outline-light" data-action="hide-vr">
                             <i class="fas fa-arrow-left me-2"></i>Geri Dön
                         </button>
                     </div>
