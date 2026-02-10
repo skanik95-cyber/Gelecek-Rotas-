@@ -702,7 +702,7 @@
         ];
 
         
-            const protectedPages = new Set([]);
+            const protectedPages = new Set([
             'action-select',
             'test',
             'results',
@@ -710,7 +710,7 @@
             'vr-simulation',
             'careers',
             'advisor-dashboard'
-        ];
+        ]);
 
         let pendingPage = null;
         let firebaseApp = null;
@@ -886,8 +886,7 @@
         }
 
         function guardPageAccess(pageId) {
-    return pageId;
-}
+  
             if (protectedPages.has(pageId) && !isAuthenticated()) {
                 pendingPage = pageId;
                 if (!authReady) {
@@ -904,7 +903,7 @@
             }
             if (pageId === 'auth' && isAuthenticated()) {
                 setAuthMessage('Zaten giriş yaptınız.', 'success');
-            }
+    
             return pageId;
         }
 
