@@ -886,26 +886,32 @@
         }
 
         function guardPageAccess(pageId) {
-  
-            if (protectedPages.has(pageId) && !isAuthenticated()) {
-                pendingPage = pageId;
-                if (!authReady) {
-                    setAuthMessage('Kimlik doğrulama servisi yükleniyor...', 'info');
-                } else {
-                    setAuthMessage('Bu sayfaya erişmek için giriş yapmalısınız.', 'warning');
-                }
-                showAuthTab('login');
-                return 'auth';
-            }
-            if (pageId === 'advisor-dashboard' && !isAdvisor()) {
-                setAuthMessage('Bu sayfaya erişmek için danışman hesabı gerekir.', 'warning');
-                return 'home';
-            }
-            if (pageId === 'auth' && isAuthenticated()) {
-                setAuthMessage('Zaten giriş yaptınız.', 'success');
-    
-            return pageId;
+
+    if (protectedPages.has(pageId) && !isAuthenticated()) {
+        pendingPage = pageId;
+
+        if (!authReady) {
+            setAuthMessage('Kimlik doğrulama servisi yükleniyor...', 'info');
+        } else {
+            setAuthMessage('Bu sayfaya erişmek için giriş yapmalısınız.', 'warning');
         }
+
+        showAuthTab('login');
+        return 'auth';
+    }
+
+    if (pageId === 'advisor-dashboard' && !isAdvisor()) {
+        setAuthMessage('Bu sayfaya erişmek için danışman hesabı gerekir.', 'warning');
+        return 'home';
+    }
+
+    if (pageId === 'auth' && isAuthenticated()) {
+        setAuthMessage('Zaten giriş yaptınız.', 'success');
+        return 'home'; // genelde auth'a tekrar girmesin diye home'a yönlendirilir
+    }
+
+    return pageId;
+}
 
         // Page navigation with smooth transitions
         function showPage(pageId) {
